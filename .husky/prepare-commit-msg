@@ -14,9 +14,27 @@ if [ -z "$ISSUE_ID" ]; then
     exit 1
 fi
 
-# i.g. HEY-1: HEY-1: my feature
-if [[ $COMMIT_MESSAGE == $ISSUE_ID* ]]; then
+# Verifica se já tem o ISSUE_ID no scope ou como prefixo
+if [[ $COMMIT_MESSAGE == *"($ISSUE_ID)"* ]] || [[ $COMMIT_MESSAGE == "$ISSUE_ID:"* ]]; then
     exit 0
 fi
 
-echo "$ISSUE_ID: $COMMIT_MESSAGE" >$1
+# Verifica se a mensagem segue o padrão conventional commits (type: ou type(scope):)
+if [[ $COMMIT_MESSAGE =~ ^([a-z]+)(\([a-zA-Z0-9\-]+\))?(:.+)$ ]]; then
+    TYPE="${BASH_REMATCH[1]}"
+    SCOPE="${BASH_REMATCH[2]}"
+    REST="${BASH_REMATCH[3]}"
+
+    # Se já tem scope, adiciona o ISSUE_ID junto
+    if [ -n "$SCOPE" ]; then
+        # Remove os parênteses do scope atual
+        CURRENT_SCOPE="${SCOPE:1:-1}"
+        echo "$TYPE($CURRENT_SCOPE,$ISSUE_ID)$REST" >$1
+    else
+        # Adiciona o ISSUE_ID como scope
+        echo "$TYPE($ISSUE_ID)$REST" >$1
+    fi
+else
+    # Se não segue conventional commits, adiciona como prefixo (fallback)
+    echo "$ISSUE_ID: $COMMIT_MESSAGE" >$1
+fi
