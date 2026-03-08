@@ -1,0 +1,5 @@
+# Este hook roda antes do commit
+# Adicione aqui validações que devem rodar antes do commit
+# Por exemplo: testes, linting, etc.
+
+exit 0
