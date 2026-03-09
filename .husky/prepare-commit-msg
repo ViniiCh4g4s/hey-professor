@@ -1,0 +1,40 @@
+
+# Cores
+NC='\033[0m'
+BBlue='\033[1;34m'
+BRed='\033[1;31m'
+
+REGEX_ISSUE_ID="[a-zA-Z0-9,\.\_\-]+-[0-9]+"
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+ISSUE_ID=$(echo "$BRANCH_NAME" | grep -o -E "$REGEX_ISSUE_ID")
+COMMIT_MESSAGE=$(cat "$1")
+
+if [ -z "$ISSUE_ID" ]; then
+    echo -e "${BRed}Branch não está no padrão que deveria mestre... ${NC}"
+    exit 1
+fi
+
+# Verifica se já tem o ISSUE_ID no scope ou como prefixo
+if [[ $COMMIT_MESSAGE == *"($ISSUE_ID)"* ]] || [[ $COMMIT_MESSAGE == "$ISSUE_ID:"* ]]; then
+    exit 0
+fi
+
+# Verifica se a mensagem segue o padrão conventional commits (type: ou type(scope):)
+if [[ $COMMIT_MESSAGE =~ ^([a-z]+)(\([a-zA-Z0-9\-]+\))?(:.+)$ ]]; then
+    TYPE="${BASH_REMATCH[1]}"
+    SCOPE="${BASH_REMATCH[2]}"
+    REST="${BASH_REMATCH[3]}"
+
+    # Se já tem scope, adiciona o ISSUE_ID junto
+    if [ -n "$SCOPE" ]; then
+        # Remove os parênteses do scope atual
+        CURRENT_SCOPE="${SCOPE:1:-1}"
+        echo "$TYPE($CURRENT_SCOPE,$ISSUE_ID)$REST" >$1
+    else
+        # Adiciona o ISSUE_ID como scope
+        echo "$TYPE($ISSUE_ID)$REST" >$1
+    fi
+else
+    # Se não segue conventional commits, adiciona como prefixo (fallback)
+    echo "$ISSUE_ID: $COMMIT_MESSAGE" >$1
+fi
