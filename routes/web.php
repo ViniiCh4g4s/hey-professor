@@ -4,9 +4,17 @@ use App\Http\Controllers\QuestionController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
-Route::inertia('/', 'welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+if (app()->isLocal()) {
+    Route::get('/', function () {
+        auth()->loginUsingId(1);
+
+        return redirect()->route('dashboard');
+    })->name('home');
+} else {
+    Route::inertia('/', 'welcome', [
+        'canRegister' => Features::enabled(Features::registration()),
+    ])->name('home');
+}
 
 Route::post('question/store', [QuestionController::class, 'store'])->name('questions.store');
 
