@@ -27,5 +27,16 @@ it('should check if ends with question mark ?', function () {
 });
 
 it('should have at least 10 characters', function () {
-    expect(true)->toBeTrue();
+    // Arrange :: preparar ---------------------------------------------------------------------
+    $user = User::factory()->create();
+    actingAs($user); // logar com esse usuário
+
+    // Act :: executar --------------------------------------------------------------------------
+    $request = post(route('questions.store'), [
+        'question' => str_repeat('*', 8) . '?',
+    ]);
+
+    // Assert :: verificar ---------------------------------------------------------------------
+    $request->assertSessionHasErrors(['question' => __('validation.min.string', ['attribute' => 'question', 'min' => 10])]);
+    assertDatabaseCount('questions', 0);
 });
