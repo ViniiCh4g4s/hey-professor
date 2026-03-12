@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{DashboardController, QuestionController};
+use App\Http\Controllers\{DashboardController, Question, QuestionController};
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -18,6 +18,7 @@ if (app()->isLocal()) {
 
 Route::get('dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 Route::post('question/store', [QuestionController::class, 'store'])->name('questions.store');
+Route::post('question/{question}/vote', Question\VoteController::class)->name('questions.vote');
 
 // Route::middleware(['auth', 'verified'])->group(function () {
 //    Route::inertia('dashboard', 'dashboard')->name('dashboard');

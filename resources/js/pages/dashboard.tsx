@@ -1,11 +1,11 @@
 import { Head } from '@inertiajs/react';
 import Container from '@/components/container';
+import ListQuestion from '@/components/list-question';
 import QuestionForm from '@/components/question-form';
 import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
-import ListQuestion from '@/components/list-question';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
