@@ -66,10 +66,11 @@ class User extends Authenticatable
 
     public function like(Question $question): void
     {
-        $this->votes()->create([
-            'question_id' => $question->id,
-            'vote'        => 'upvote',
-        ]);
+        // Create or update the vote for the question by the user
+        $this->votes()->updateOrCreate(
+            ['question_id' => $question->id],
+            ['vote' => 'upvote'],
+        );
         //        Vote::query()->create([
         //            'question_id' => $question->id,
         //            'user_id'     => auth()->id(),
