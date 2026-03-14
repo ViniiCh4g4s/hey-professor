@@ -10,9 +10,9 @@ class VoteController extends Controller
 {
     public function __invoke(Question $question): RedirectResponse
     {
+        //        dd($question->toArray());
         user()->like($question);
 
-        //        dd($question->toArray());
         return back();
     }
 }
