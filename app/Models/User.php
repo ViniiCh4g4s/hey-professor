@@ -64,18 +64,13 @@ class User extends Authenticatable
         return $this->hasMany(Vote::class);
     }
 
-    public function like(Question $question): void
+    public function vote(Question $question, string $type): void
     {
-        // Create or update the vote for the question by the user
+        // Cria ou atualiza o voto do usuário para a pergunta.
+        // $type pode ser 'upvote' ou 'downvote', vindo do request.
         $this->votes()->updateOrCreate(
             ['question_id' => $question->id],
-            ['vote' => 'upvote'],
+            ['vote' => $type],
         );
-        //        Vote::query()->create([
-        //            'question_id' => $question->id,
-        //            'user_id'     => auth()->id(),
-        //            'vote'        => 'upvote',
-        //            'vote'        => request()->has('like') ? 'upvote' : 'downvote',
-        //        ]);
     }
 }
