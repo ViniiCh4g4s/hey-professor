@@ -12,6 +12,7 @@ interface Question {
 }
 
 export default function ListQuestion({ item }: { item: Question }) {
+    console.log(item);
     return (
         <Card>
             <CardContent className="flex items-center justify-between gap-4">
